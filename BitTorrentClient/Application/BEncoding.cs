@@ -4,7 +4,10 @@ namespace BitTorrentClient.Application;
 
 public class BEncoding
 {
-
+    //Strings 9:somewords
+    //Integers i4e
+    //Lists l4spam:3lole
+    //Dictsd d8:greeting5:hello4:name4:jakee
     private const byte DictionaryStart = 100; // d
     private static byte DictionaryEnd = System.Text.Encoding.UTF8.GetBytes("e")[0]; // 101
     private const byte ListStart = 108; // l
@@ -45,9 +48,13 @@ public class BEncoding
         throw new NotImplementedException();
     }
 
-    //Strings 9:somewords
-    //Integers i4e
-    //Lists l4spam:3lole
-    //Dictsd d8:greeting5:hello4:name4:jakee
-}
+    public static object DecodeFile(string path)
+    {
+        if (!File.Exists(path))
+            throw new FileNotFoundException($"File path {path} does not exist");
 
+        byte[] bytes = File.ReadAllBytes(path);
+
+        return BEncoding.Decode(bytes);
+    }
+}

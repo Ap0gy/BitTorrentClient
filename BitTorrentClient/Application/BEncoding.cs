@@ -8,13 +8,13 @@ public class BEncoding
     //Integers i4e
     //Lists l4spam:3lole
     //Dictsd d8:greeting5:hello4:name4:jakee
-    private const byte DictionaryStart = 100; // d
-    private static byte DictionaryEnd = System.Text.Encoding.UTF8.GetBytes("e")[0]; // 101
-    private const byte ListStart = 108; // l
-    private static byte ListEnd = System.Text.Encoding.UTF8.GetBytes("e")[0]; // 101
-    private const byte NumberStart = 105; // i
-    private static byte NumberEnd = System.Text.Encoding.UTF8.GetBytes("e")[0]; // 101
-    private static byte ByteArrayDivider = System.Text.Encoding.UTF8.GetBytes(":")[0]; //  58
+    private const byte DictionaryStart = (byte)'d';
+    private const byte DictionaryEnd = (byte)'e';
+    private const byte ListStart = (byte)'l';
+    private static byte ListEnd = (byte)'e';
+    private const byte NumberStart = (byte)'i';
+    private static byte NumberEnd = (byte)'e';
+    private static byte ByteArrayDivider = (byte)':';
 
     public static object Decode(byte[] bytes)
     {
@@ -31,14 +31,52 @@ public class BEncoding
         _ => DecodeByteArray(enumerator)
     };
 
-    private static object DecodeByteArray(IEnumerator<byte> enumerator)
+    private static byte[] DecodeByteArray(IEnumerator<byte> enumerator)
     {
-        throw new NotImplementedException();
+        List<byte> lengthBytes = new();
+
+        do
+        {
+            if (enumerator.Current == ByteArrayDivider)
+                break;
+
+            lengthBytes.Add(enumerator.Current);
+        }
+        while (enumerator.MoveNext());
+
+        string lengthString = Encoding.UTF8.GetString(lengthBytes.ToArray());
+
+        if (!int.TryParse(lengthString, out var length))
+            throw new Exception("unable to parse length of byte array");
+
+        byte[] bytes = new byte[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            enumerator.MoveNext();
+            bytes[i] = enumerator.Current;
+        }
+
+        return bytes;
     }
-    private static object DecodeNumber(IEnumerator<byte> enumerator)
+
+    private static long DecodeNumber(IEnumerator<byte> enumerator)
     {
-        throw new NotImplementedException();
+        List<byte> bytes = new();
+
+        while (enumerator.MoveNext())
+        {
+            if (enumerator.Current == NumberEnd)
+                break;
+
+            bytes.Add(enumerator.Current);
+        }
+
+        string numberAsString = Encoding.UTF8.GetString(bytes.ToArray());
+
+        return Int64.Parse(numberAsString);
     }
+
     private static object DecodeList(IEnumerator<byte> enumerator)
     {
         throw new NotImplementedException();
@@ -55,6 +93,6 @@ public class BEncoding
 
         byte[] bytes = File.ReadAllBytes(path);
 
-        return BEncoding.Decode(bytes);
+        return Decode(bytes);
     }
 }

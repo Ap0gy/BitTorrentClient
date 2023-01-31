@@ -1,4 +1,6 @@
-﻿namespace BitTorrentClient.Application.DecodingStrategies
+﻿using BitTorrentClient.Application.Decoding;
+
+namespace BitTorrentClient.Application
 {
     public interface IStrategyCache<TKey, TStrategy>
     {
@@ -21,10 +23,10 @@
         {
             get
             {
-                if (_strategies.TryGetValue(key, out TStrategy strategy)) 
+                if (_strategies.TryGetValue(key, out TStrategy strategy))
                     return strategy;
 
-                strategy = _strategyDirector.GetDecodeStrategy(key, this);
+                strategy = _strategyDirector.GetStrategy(key, this);
 
                 _strategies.Add(key, strategy);
 

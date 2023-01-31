@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace BitTorrentClient.Application.DecodingStrategies
 {
-    internal class NumberDecodeStrategy
+    internal class NumberDecodeStrategy : IDecodeStrategy
     {
+        public object Decode(IEnumerator<byte> data)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

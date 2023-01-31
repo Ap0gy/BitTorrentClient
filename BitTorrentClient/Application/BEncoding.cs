@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using BitTorrentClient.Application.DecodingStrategies;
+using System.Text;
 
 namespace BitTorrentClient.Application;
 
@@ -16,9 +17,10 @@ public class BEncoding
 
     public static object Decode(byte[] bytes)
     {
+        var strategyCache = new StrategyCache<byte, IDecodeStrategy, DecodeStrategyDirector>();
         IEnumerator<byte> enumerator = (IEnumerator<byte>)bytes.GetEnumerator();
         enumerator.MoveNext();
-        return DecodeNextObject(enumerator);
+        return strategyCache[enumerator.Current].Decode(enumerator);
     }
 
     public static object DecodeFile(string path)
@@ -29,29 +31,5 @@ public class BEncoding
         byte[] bytes = File.ReadAllBytes(path);
 
         return Decode(bytes);
-    }
-
-    private static object DecodeNextObject(IEnumerator<byte> enumerator) => enumerator.Current switch
-    {
-        DictionaryStart => DecodeDictionary(enumerator),
-        ListStart => DecodeList(enumerator),
-        NumberStart => DecodeNumber(enumerator),
-        _ => DecodeByteArray(enumerator)
-    };
-
-
-    private static List<object> DecodeList(IEnumerator<byte> enumerator)
-    {
-        List<object> list = new();
-
-        while (enumerator.MoveNext())
-        {
-            if (enumerator.Current == ListEnd)
-                break;
-
-            list.Add(DecodeNextObject(enumerator));
-        }
-
-        return list;
     }
 }

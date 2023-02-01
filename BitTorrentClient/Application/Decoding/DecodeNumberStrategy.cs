@@ -1,26 +1,25 @@
 ﻿using System.Text;
 
-namespace BitTorrentClient.Application.Decoding
+namespace BitTorrentClient.Application.Decoding;
+
+internal class DecodeNumberStrategy : IDecodeStrategy
 {
-    internal class DecodeNumberStrategy : IDecodeStrategy
+    private const byte NumberEnd = (byte)'e';
+
+    public object Decode(IEnumerator<byte> enumerator)
     {
-        private const byte NumberEnd = (byte)'e';
+        List<byte> bytes = new();
 
-        public object Decode(IEnumerator<byte> enumerator)
+        while (enumerator.MoveNext())
         {
-            List<byte> bytes = new();
+            if (enumerator.Current == NumberEnd)
+                break;
 
-            while (enumerator.MoveNext())
-            {
-                if (enumerator.Current == NumberEnd)
-                    break;
-
-                bytes.Add(enumerator.Current);
-            }
-
-            string numAsString = Encoding.UTF8.GetString(bytes.ToArray());
-
-            return Int64.Parse(numAsString);
+            bytes.Add(enumerator.Current);
         }
+
+        string numAsString = Encoding.UTF8.GetString(bytes.ToArray());
+
+        return Int64.Parse(numAsString);
     }
 }

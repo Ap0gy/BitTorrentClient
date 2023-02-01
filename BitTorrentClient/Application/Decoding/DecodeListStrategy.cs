@@ -1,5 +1,4 @@
-﻿namespace BitTorrentClient.Application.Decoding
-{
+﻿namespace BitTorrentClient.Application.Decoding;
     public class DecodeListStrategy : IDecodeStrategy
     {
         private static byte ListEnd = (byte)'e';
@@ -27,4 +26,3 @@
             return list;
         }
     }
-}

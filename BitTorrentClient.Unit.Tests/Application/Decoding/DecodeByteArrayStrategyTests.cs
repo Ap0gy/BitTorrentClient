@@ -1,4 +1,4 @@
-namespace BitTorrentClient.Unit.Tests;
+namespace BitTorrentClient.Unit.Tests.Application.Decoding;
 
 public class DecodeByteArrayStrategyTests
 {

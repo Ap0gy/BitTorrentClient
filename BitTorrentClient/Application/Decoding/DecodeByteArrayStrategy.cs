@@ -1,39 +1,38 @@
-﻿namespace BitTorrentClient.Application.Decoding
+﻿namespace BitTorrentClient.Application.Decoding;
+
+internal class DecodeByteArrayStrategy : IDecodeStrategy
 {
-    internal class DecodeByteArrayStrategy : IDecodeStrategy
+    private const byte ByteArrayDivider = (byte)'e';
+
+    public object Decode(IEnumerator<byte> enumerator)
     {
-        private const byte ByteArrayDivider = (byte)'e';
+        List<byte> lengthBytes = new List<byte>();
 
-        public object Decode(IEnumerator<byte> enumerator)
+        do
         {
-            List<byte> lengthBytes = new List<byte>();
+            if (enumerator.Current == ByteArrayDivider)
+                break;
 
-            do
-            {
-                if (enumerator.Current == ByteArrayDivider)
-                    break;
-
-                lengthBytes.Add(enumerator.Current);
-            }
-            while (enumerator.MoveNext());
-
-            string lengthString = System.Text.Encoding.UTF8.GetString(lengthBytes.ToArray());
-
-            int length;
-            if (!int.TryParse(lengthString, out length))
-            {
-                throw new Exception("Unable to parse the length of the byte array");
-            }
-
-            byte[] bytes = new byte[length];
-
-            for (int i = 0; i < length; i++)
-            {
-                enumerator.MoveNext();
-                bytes[i] = enumerator.Current;
-            }
-
-            return bytes;
+            lengthBytes.Add(enumerator.Current);
         }
+        while (enumerator.MoveNext());
+
+        string lengthString = System.Text.Encoding.UTF8.GetString(lengthBytes.ToArray());
+
+        int length;
+        if (!int.TryParse(lengthString, out length))
+        {
+            throw new Exception("Unable to parse the length of the byte array");
+        }
+
+        byte[] bytes = new byte[length];
+
+        for (int i = 0; i < length; i++)
+        {
+            enumerator.MoveNext();
+            bytes[i] = enumerator.Current;
+        }
+
+        return bytes;
     }
 }

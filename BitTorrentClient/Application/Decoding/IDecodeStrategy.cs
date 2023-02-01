@@ -1,7 +1,6 @@
-﻿namespace BitTorrentClient.Application.Decoding
+﻿namespace BitTorrentClient.Application.Decoding;
+
+public interface IDecodeStrategy
 {
-    public interface IDecodeStrategy
-    {
-        object Decode(IEnumerator<byte> enumerator);
-    }
+    object Decode(IEnumerator<byte> enumerator);
 }

@@ -2,7 +2,7 @@
 
 namespace BitTorrentClient.Application.Decoding
 {
-    internal class NumberDecodeStrategy : IDecodeStrategy
+    internal class DecodeNumberStrategy : IDecodeStrategy
     {
         private const byte NumberEnd = (byte)'e';
 

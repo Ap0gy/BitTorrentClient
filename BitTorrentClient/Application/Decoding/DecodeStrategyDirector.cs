@@ -18,7 +18,7 @@
         {
             DictionaryStart => new DecodeDictionaryStrategy(),
             ListStart => new DecodeListStrategy(strategyCache),
-            NumberStart => new NumberDecodeStrategy(),
+            NumberStart => new DecodeNumberStrategy(),
             _ => new DecodeByteArrayStrategy()
         };
     }
